@@ -8,7 +8,7 @@ import pandas as pd
 import json
 
 # setting
-DATA_SIZE_FOR_EACH = 3
+DATA_SIZE_FOR_EACH = 1
 # 검색할 유튜브 채널명 리스트
 channel_names = []
 with open("youtubers_gaming.json", "r", encoding="utf-8") as f:
@@ -22,6 +22,30 @@ driver = webdriver.Chrome(options=options)
 driver.maximize_window()
 
 results = []
+
+def collect_videos_sorted_by(sort_keyword):
+    video_info = []
+
+    # 정렬 버튼 누르기
+    sort_buttons = driver.find_elements(By.XPATH, '//*[@id="chip-shape-container"]/chip-shape/button/div')
+    for btn in sort_buttons:
+        text = btn.text.strip()
+        if sort_keyword in text:
+            btn.click()
+            print(f"✅ '{sort_keyword}' 정렬 버튼 클릭")
+            time.sleep(2)
+            break
+
+    # 영상 목록 수집
+    video_elements = driver.find_elements(By.XPATH, '//a[@id="video-title-link"]')[:DATA_SIZE_FOR_EACH]
+    for element in video_elements:
+        href = element.get_attribute("href")
+        title = element.get_attribute("title")
+        if href:
+            video_info.append((href, title))
+
+    return video_info
+
 
 for channel in channel_names:
     try:
@@ -49,37 +73,9 @@ for channel in channel_names:
             continue
 
         # 4. 인기순 정렬
-        try:
-            sort_buttons = driver.find_elements(By.XPATH, '//*[@id="chip-shape-container"]/chip-shape/button/div')
-            clicked = False
-
-            for btn in sort_buttons:
-                btn_text = btn.text.strip()
-                print("정렬 버튼 텍스트:", btn_text)
-
-                if "인기" in btn_text or "Popular" in btn_text:
-                    btn.click()
-                    clicked = True
-                    print("✅ 인기순 버튼 클릭 완료")
-                    time.sleep(2)
-
-            if not clicked:
-                print(f"[SKIP] {channel} 인기 버튼을 찾을 수 없음 (기본 순서로 진행)")
-
-        except Exception as e:
-            print(f"[SKIP] {channel} 인기순 정렬 실패")
-            print(f"{e}")
-            continue
-
-        # 5. 상위 20개 영상 URL 수집
-        video_elements = driver.find_elements(By.XPATH, '//a[@id="video-title-link"]')[:DATA_SIZE_FOR_EACH]
-
-        video_data = []
-        for element in video_elements:
-            href = element.get_attribute("href")
-            title = element.get_attribute("title")
-            if href:
-                video_data.append((href, title))
+        latest_videos = collect_videos_sorted_by("최신")
+        popular_videos = collect_videos_sorted_by("인기")
+        video_data = latest_videos + popular_videos 
 
         for video_url, video_title in video_data:
             # 동영상 접속
@@ -94,7 +90,7 @@ for channel in channel_names:
             if '"category":"' in html:
                 start = html.find('"category":"') + len('"category":"')
                 end = html.find('"', start)
-                category = html[start:end]
+                category = html[start:end].replace('\\u0026', ',')
             else:
                 category = ""
 
@@ -124,6 +120,6 @@ driver.quit()
 
 # CSV로 저장
 df = pd.DataFrame(results)
-df.to_csv("youtube_metadata.csv", index=False, encoding="utf-8-sig")
+df.to_csv("youtube_metadata.csv", index=False, encoding="utf-8-sig", quoting=csv.QUOTE_NONNUMERIC)
 print("✅ 완료! youtube_metadata.csv 파일 생성됨.")
 
