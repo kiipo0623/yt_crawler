@@ -4,10 +4,15 @@ from selenium.webdriver.chrome.options import Options
 import json
 import time
 
+# setting
+CRAWLING_URL = "https://youtube-rank.com/board/bbs/board.php?bo_table=youtube&sca=뉴스%2F정치%2F사회"
+DATA_SIZE = 50
+FILE_NAME = "youtubers_politics.json"
+
 options = Options()
 # options.add_argument("--headless")
 driver = webdriver.Chrome(options=options)
-driver.get("https://youtube-rank.com/board/bbs/board.php?bo_table=youtube&sca=게임")
+driver.get(CRAWLING_URL)
 
 time.sleep(2)  # 로딩 대기
 
@@ -31,10 +36,9 @@ for row in rows:
 
 print(f"총 수집된 유튜버 수: {len(youtuber_names)}")
 
-# 최대 20개까지만 저장
-youtuber_names = youtuber_names[:50]
+youtuber_names = youtuber_names[:DATA_SIZE]
 
-with open("youtubers_gaming.json", "w", encoding="utf-8") as f:
+with open(FILE_NAME, "w", encoding="utf-8") as f:
     json.dump(youtuber_names, f, ensure_ascii=False, indent=2)
 
 print("✅ 유튜버 수집 완료!")

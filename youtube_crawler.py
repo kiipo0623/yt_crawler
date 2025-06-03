@@ -8,10 +8,13 @@ import pandas as pd
 import json
 
 # setting
-DATA_SIZE_FOR_EACH = 1
+DATA_SIZE_FOR_EACH = 20
+CREATOR_FILE_NAME = "youtubers_politics.json"
+RESULT_FILE_NAME = "youtube_politics_data.json"
+
 # 검색할 유튜브 채널명 리스트
 channel_names = []
-with open("youtubers_gaming.json", "r", encoding="utf-8") as f:
+with open(CREATOR_FILE_NAME, "r", encoding="utf-8") as f:
     channel_names = json.load(f)
 
 # 크롬 드라이버 설정
@@ -120,6 +123,6 @@ driver.quit()
 
 # CSV로 저장
 df = pd.DataFrame(results)
-df.to_csv("youtube_metadata.csv", index=False, encoding="utf-8-sig", quoting=csv.QUOTE_NONNUMERIC)
-print("✅ 완료! youtube_metadata.csv 파일 생성됨.")
+df.to_csv(RESULT_FILE_NAME, index=False, encoding="utf-8-sig", quoting=csv.QUOTE_NONNUMERIC)
+print(f"✅ 완료! {RESULT_FILE_NAME} 파일 생성됨.")
 
