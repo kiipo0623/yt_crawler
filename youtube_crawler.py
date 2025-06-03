@@ -5,51 +5,18 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import pandas as pd
+import json
 
+# setting
+DATA_SIZE_FOR_EACH = 3
 # 검색할 유튜브 채널명 리스트
-channel_names = [
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-    "소맥거핀",
-    "침착맨",
-    "침착맨",
-    "침착맨",
-
-]
+channel_names = []
+with open("youtubers_gaming.json", "r", encoding="utf-8") as f:
+    channel_names = json.load(f)
 
 # 크롬 드라이버 설정
 options = Options()
-options.add_argument("--headless")  # 브라우저 안 띄움
+# options.add_argument("--headless")  # 브라우저 안 띄움
 options.add_argument("--disable-gpu")
 driver = webdriver.Chrome(options=options)
 driver.maximize_window()
@@ -105,7 +72,7 @@ for channel in channel_names:
             continue
 
         # 5. 상위 20개 영상 URL 수집
-        video_elements = driver.find_elements(By.XPATH, '//a[@id="video-title-link"]')[:20]
+        video_elements = driver.find_elements(By.XPATH, '//a[@id="video-title-link"]')[:DATA_SIZE_FOR_EACH]
 
         video_data = []
         for element in video_elements:
