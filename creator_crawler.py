@@ -5,9 +5,9 @@ import json
 import time
 
 # setting
-CRAWLING_URL = "https://youtube-rank.com/board/bbs/board.php?bo_table=youtube&sca=스포츠%2F운동"
+CRAWLING_URL = "https://youtube-rank.com/board/bbs/board.php?bo_table=youtube&sca=음식%2F요리%2F레시피"
 DATA_SIZE = 50
-FILE_NAME = "youtubers_sports.json"
+FILE_NAME = "./youtuber/youtuber_cooking.json"
 
 options = Options()
 # options.add_argument("--headless")

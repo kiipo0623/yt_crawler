@@ -9,8 +9,8 @@ import json
 
 # setting
 DATA_SIZE_FOR_EACH = 20
-CREATOR_FILE_NAME = "youtubers_sports.json"
-RESULT_FILE_NAME = "youtube_sports_data.csv"
+CREATOR_FILE_NAME = "./youtuber/youtubers_cooking.json"
+RESULT_FILE_NAME = "data/youtube_cooking_data.csv"
 
 # 검색할 유튜브 채널명 리스트
 channel_names = []
